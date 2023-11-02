@@ -1,0 +1,18 @@
+{% extends "payment/base.html" %}
+
+{% block content %}
+    <section class="index">
+        <h1 class='wellcome'>Olá! Usuario!</h1>
+        <div class='products'>
+            {% for product in products %}
+               <a href="{% url 'payment:product_page' product.id %}" class='product'>
+                <div class="product-img">
+                    <img src="" alt="">
+                </div>
+                    <h1>{{product.name}}</h1>
+                    <h2>{{product.price}}</h2>
+                </a>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock content %}

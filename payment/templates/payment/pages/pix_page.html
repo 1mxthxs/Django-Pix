@@ -1,0 +1,26 @@
+{% extends "payment/base.html" %}
+{% load static %}
+{% block content %}
+
+<script>
+async function copyTextToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log('Texto copiado para a área de transferência');
+  } catch (err) {
+    console.error('Falha ao copiar: ', err);
+  }
+}
+</script>
+
+    <section>
+        <h1 class="section-title">Seu QRCODE!</h1>
+        <div class="pix-qrcode">
+            <img src="{% static 'pixqrcodegen.png' %}" alt="">
+        </div>
+
+        <p hidden id="textoParaCopiar">{{pix_copy_paste}}</p>
+        <button onclick="copyTextToClipboard(document.getElementById('textoParaCopiar').innerText)" class="pix-copy-paste">Clique aqui parar copiar chave pix<br>(Pix Copia e Cola)</button>
+
+    </section>
+{% endblock content %}
