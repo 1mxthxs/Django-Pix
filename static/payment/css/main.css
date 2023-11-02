@@ -13,7 +13,7 @@
         height: 140px !important; 
         
     }
-    .product > h1, .product > h2{
+    .product-info > h1, .product-info > h2{
         font-size: smaller !important;
     }
     
@@ -64,7 +64,13 @@ section.index{
     height: 200px;
     border: 1px solid black;
 }
-.product > h1, .product > h2{
+.product-info{
+    height: 15%;
+    display: flex;
+    align-items: center;
+}
+.product-info > h1, .product-info > h2{
+    width: 100%;
     text-decoration: none;
     color: black;
     text-align: center;

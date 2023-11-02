@@ -6,13 +6,8 @@
         <h1 class='section-title'>Compre Agora!</h1>
         <div class='products'>
             
-            <a url='' class='product'>
-                <div class="product-img">
-                    <img src="" alt="">
-                </div>
-                <h1>{{product.name}}</h1>
-                <h2>{{product.price}}</h2>
-            </a>
+            {% include "payment/partials/product_item.html" %}
+            
             <div class="payments-ways">
                 <a href="{% url 'payment:pix' product.id %}" class='product-buy'>
                     <h2>Pagamento instantâneo com pix!</h2>
