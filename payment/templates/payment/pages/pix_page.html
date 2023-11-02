@@ -16,7 +16,8 @@ async function copyTextToClipboard(text) {
     <section>
         <h1 class="section-title">Seu QRCODE!</h1>
         <div class="pix-qrcode">
-            <img src="{% static 'pixqrcodegen.png' %}" alt="">
+            <img src="{{ qrcode_base64 }}" alt="Pix QR Code">
+
         </div>
 
         <p hidden id="textoParaCopiar">{{pix_copy_paste}}</p>

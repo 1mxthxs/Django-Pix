@@ -1,6 +1,8 @@
 import crcmod
 import qrcode
 import os
+import base64
+from io import BytesIO
 
 
 class Payload():
@@ -42,30 +44,70 @@ class Payload():
         self.addDataField = f'62{len(self.addDataField_tam):02d}{self.addDataField_tam}'
         self.crc16 = '6304'
 
-  
-    def gerarPayload(self):
-        self.payload = f'{self.payloadFormat}{self.merchantAccount}{self.merchantCategCode}{self.transactionCurrency}{self.transactionAmount}{self.countryCode}{self.merchantName}{self.merchantCity}{self.addDataField}{self.crc16}'
+    def gerarQrCodeBase64(self, payload):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(payload)
+        qr.make(fit=True)
 
+        img = qr.make_image(fill_color="black", back_color="white")
+
+        buffered = BytesIO()
+        img.save(buffered, format="PNG")
+        img_str = base64.b64encode(buffered.getvalue()).decode()
+
+        return f'data:image/png;base64,{img_str}'
+  
+  
+   
+    def gerarPayload(self):
+        # Cria o payload do PIX
+        self.payload = (
+            f'{self.payloadFormat}'
+            f'{self.merchantAccount}'
+            f'{self.merchantCategCode}'
+            f'{self.transactionCurrency}'
+            f'{self.transactionAmount}'
+            f'{self.countryCode}'
+            f'{self.merchantName}'
+            f'{self.merchantCity}'
+            f'{self.addDataField}'
+            f'{self.crc16}'
+        )
+
+        # Gera e anexa o CRC16 ao payload
         self.gerarCrc16(self.payload)
+        
+        # Retorna a imagem do QR Code em base64
+        self.qrcode_base64 = self.gerarQrCodeBase64(self.payload_completa)
+        return self.qrcode_base64
       
 
     
     def gerarCrc16(self, payload):
-        crc16 = crcmod.mkCrcFun(poly=0x11021, initCrc=0xFFFF, rev=False, xorOut=0x0000)
+        crc16_func = crcmod.mkCrcFun(poly=0x11021, initCrc=0xFFFF, rev=False, xorOut=0x0000)
 
-        self.crc16Code = hex(crc16(str(payload).encode('utf-8')))
 
+        self.crc16Code = hex(crc16_func(str(payload).encode('utf-8')))
+  
         self.crc16Code_formatado = str(self.crc16Code).replace('0x', '').upper().zfill(4)
+
 
         self.payload_completa = f'{payload}{self.crc16Code_formatado}'
 
-        self.gerarQrCode(self.payload_completa, self.diretorioQrCode)
 
+    def gerarPayloadString(self):
+        # Retorna o payload PIX como uma string
+        return self.payload_completa
     
     def gerarQrCode(self, payload, diretorio):
         dir = os.path.expanduser(diretorio)
         self.qrcode = qrcode.make(payload)
-        self.qrcode.save(os.path.join(dir, 'payment', 'static', 'pixqrcodegen.png'))
+        self.qrcode.save(os.path.join(dir, 'payment', 'qrcode', 'pixqrcodegen.png'))
 
         
         return print(payload)

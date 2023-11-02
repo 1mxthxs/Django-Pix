@@ -18,23 +18,17 @@ def product_page(request, id):
 def pix(request, id):
     product = Product.objects.get(id=id)
     formatted_price = "{:.2f}".format(product.price)
+    txtId = str(product.name).strip()[:40] 
+    txtId = ''.join(e for e in txtId if e.isalnum() or e in (' ', '-', '_'))  
     
-    print(product.name) 
-    txtId = str(product.name).strip()[:40]  # Truncate to 40 characters or the max length allowed for txtId
-    print(txtId)  
-    txtId = ''.join(e for e in txtId if e.isalnum() or e in (' ', '-', '_'))  # Removendo caracteres especiais
-
-    pix_copy_paste = Payload('Ciborg Inc.', 'matheusricardo164@gmail.com', formatted_price, 'Manacapuru', txtId).gerarPayload()
+    pix_payload = Payload('Ciborg Inc.', 'matheusricardo164@gmail.com', formatted_price, 'Manacapuru', txtId)
+    qrcode_base64 = pix_payload.gerarPayload()
+    pix_copy_paste = pix_payload.gerarPayloadString()
  
-    
-    
-    print(txtId)  
-    #pix_copy_paste = Payload('Cibog Inc.', 'matheusricardo164@gmail.com', formatted_price, 'Manacapuru', 'Ciborg').gerarPayload()
-
-    
     return render(request, "payment/pages/pix_page.html",{
         "product": product,
         'pix_copy_paste': pix_copy_paste,
+        'qrcode_base64': qrcode_base64,
     })
 
 
